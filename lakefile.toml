@@ -1,0 +1,16 @@
+name = "Erdos848"
+version = "1.0.0"
+keywords = ["number-theory", "squarefree", "erdos-problems"]
+defaultTargets = ["Erdos848"]
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "54e71fa9173471d591658f5380c46aaf050bbaae"
+
+[[lean_lib]]
+name = "Erdos848"
