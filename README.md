@@ -29,7 +29,10 @@ Verified (kernel-checked; no `sorry`, no `native_decide`; axioms within
   Euler's criterion (no prime p ≡ 3 (mod 4) divides n² + 1), and the Hensel
   root bound (at most two roots of x² ≡ −1 mod p and mod p²). Plus F3,
   factored through mod 25, and the classification of exactly two mixed
-  mod-100 class pairs, (7, 93) and (57, 43).
+  mod-100 class pairs, (7, 93) and (57, 43). Plus the bridge
+  (`Glued s t ↔ gluedB s t = true`, identifying the Bool checks with the
+  Prop predicate) and the F2 transfer (`Glued a b ↔ Glued (typeOf a)
+  (typeOf b)`: gluing of integers depends only on their types mod 900).
 
 In progress / queued:
 

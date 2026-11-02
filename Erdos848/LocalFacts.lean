@@ -8,9 +8,9 @@ namespace Erdos848
     or `25 ∣ s*t + 1`, tested by remainders. The finite theorems in this file
     are proved by kernel `decide` and were pre-verified in core Lean before
     delivery; `f1_prime_three_mod_four` is the file's first Mathlib-tier
-    proof. The bridge `Glued s t ↔ gluedB s t = true` on residues, and the
-    F2 transfer (gluing of integers depends only on their types mod 900),
-    remain queued. -/
+    proof. The bridge `Glued s t ↔ gluedB s t = true` and the F2 transfer
+    (gluing of integers depends only on their types mod 900) are proved at
+    the end of the file. -/
 def gluedB (s t : ℕ) : Bool :=
   (s * t + 1) % 4 == 0 || (s * t + 1) % 9 == 0 || (s * t + 1) % 25 == 0
 
@@ -262,5 +262,34 @@ theorem only_two_pairs :
         if classPairOk u v then some (u, v) else none))
     = [(7, 93), (57, 43)] := by
   decide
+
+/-! ## Bridge and F2
+
+The bridge identifies the Bool check `gluedB` with the Prop predicate
+`Glued` from `Basic.lean`. F2 says gluing of integers depends only on
+their types mod 900, via the kernel fact that for `d ∣ 900`,
+divisibility of `a * b + 1` by `d` only sees `a, b` mod 900. -/
+
+/-- Bridge: `Glued` (Prop) agrees with the Bool check `gluedB`. -/
+theorem glued_iff_gluedB (s t : ℕ) : Glued s t ↔ gluedB s t = true := by
+  simp [Glued, gluedB, Nat.dvd_iff_mod_eq_zero, or_assoc]
+
+/-- F2 kernel: for `d ∣ 900`, divisibility of `a * b + 1` by `d` depends
+    only on the types of `a` and `b` mod 900. -/
+theorem dvd_glued_mod (d a b : ℕ) (hd : d ∣ 900) :
+    d ∣ a * b + 1 ↔ d ∣ (a % 900) * (b % 900) + 1 := by
+  have ha : a % 900 ≡ a [MOD d] := Nat.mod_mod_of_dvd a hd
+  have hb : b % 900 ≡ b [MOD d] := Nat.mod_mod_of_dvd b hd
+  have hadd : (a % 900) * (b % 900) + 1 ≡ a * b + 1 [MOD d] :=
+    (ha.mul hb).add_right 1
+  rw [← Nat.modEq_zero_iff_dvd, ← Nat.modEq_zero_iff_dvd]
+  exact ⟨fun h => hadd.trans h, fun h => hadd.symm.trans h⟩
+
+/-- F2: gluing of integers depends only on their types mod 900. -/
+theorem glued_typeOf (a b : ℕ) : Glued a b ↔ Glued (typeOf a) (typeOf b) := by
+  have h4 := dvd_glued_mod 4 a b (by norm_num)
+  have h9 := dvd_glued_mod 9 a b (by norm_num)
+  have h25 := dvd_glued_mod 25 a b (by norm_num)
+  simp only [Glued, typeOf, h4, h9, h25]
 
 end Erdos848
